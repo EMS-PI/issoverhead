@@ -4,19 +4,21 @@ import smtplib
 from email.message import EmailMessage
 import os
 
-MY_LATITUDE = 42.283770
-MY_LONGITUDE = -71.347290
+MY_LATITUDE = 42.29
+MY_LONGITUDE = -71.35
 SENDER_EMAIL = os.environ.get("SENDER_EMAIL")
 SENDER_PASSWORD = os.environ.get("SENDER_PASSWORD")
 RECIPIENT_EMAIL = os.environ.get("RECIPIENT_EMAIL")
 SMTP_SERVER = "smtp.gmail.com"
 PORT = 587
+DEBUG = True
 
 
 def iss_position():
     response = requests.get(url="http://api.open-notify.org/iss-now.json")
     response.raise_for_status()
     data = response.json()
+    print(data)
 
     iss_latitude = float(data["iss_position"]["latitude"])
     iss_longitude = float(data["iss_position"]["longitude"])
@@ -62,8 +64,12 @@ def send_email():
 
 
 iss_pos = iss_position()
-if abs(iss_pos[0] - MY_LATITUDE) < 5 and abs(iss_pos[1] - MY_LONGITUDE) < 5:
-    if is_night_time():
+print(iss_pos)
+print(abs(iss_pos[0] - MY_LATITUDE))
+print(abs(iss_pos[1] - MY_LONGITUDE))
+
+if (abs(iss_pos[0] - MY_LATITUDE) < 5 and abs(iss_pos[1] - MY_LONGITUDE) < 5) or DEBUG:
+    if is_night_time() or DEBUG:
         print(f"ISS is here. Go out! ({iss_pos[2]})")
         send_email()
     else:
