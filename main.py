@@ -4,12 +4,12 @@ import smtplib
 from email.message import EmailMessage
 import os
 
-MY_LATITUDE = 42.29
-MY_LONGITUDE = -71.35
+MY_LATITUDE = float(os.environ.get("MY_LATITUDE"))
+MY_LONGITUDE = float(os.environ.get("MY_LONGITUDE"))
 SENDER_EMAIL = os.environ.get("SENDER_EMAIL")
 SENDER_PASSWORD = os.environ.get("SENDER_PASSWORD")
 RECIPIENT_EMAIL = os.environ.get("RECIPIENT_EMAIL")
-SMTP_SERVER = "smtp.gmail.com"
+SMTP_SERVER = os.environ.get("SMTP_SERVER")
 PORT = 587
 DEBUG = True
 
@@ -56,13 +56,6 @@ def send_email():
     email_msg['From'] = SENDER_EMAIL
     email_msg['To'] = RECIPIENT_EMAIL
     email_msg['Bcc'] = SENDER_EMAIL
-
-    if SENDER_EMAIL is None:
-        print("Sender is none")
-    if RECIPIENT_EMAIL is None:
-        print("recipient is none")
-    if SENDER_PASSWORD is None:
-        print("password is none")
 
     with smtplib.SMTP(host=SMTP_SERVER, port=PORT) as connection:
         connection.starttls()
