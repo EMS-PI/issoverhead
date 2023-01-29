@@ -29,4 +29,5 @@ jobs:
           MY_LONGITUDE: ${{ vars.MY_LONGITUDE }}
           SMTP_SERVER: ${{ vars.SMTP_SERVER }}
           VERBOSE: ${{ vars.VERBOSE }}
+          DEBUG: ${{ vars.DEBUG }}
         run: python3 main.py
