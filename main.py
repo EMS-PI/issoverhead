@@ -57,6 +57,13 @@ def send_email():
     email_msg['To'] = RECIPIENT_EMAIL
     email_msg['Bcc'] = SENDER_EMAIL
 
+    if SENDER_EMAIL is None:
+        print("Sender is none")
+    if RECIPIENT_EMAIL is None:
+        print("recipient is none")
+    if SENDER_PASSWORD is None:
+        print("password is none")
+
     with smtplib.SMTP(host=SMTP_SERVER, port=PORT) as connection:
         connection.starttls()
         connection.login(user=SENDER_EMAIL, password=SENDER_PASSWORD)
