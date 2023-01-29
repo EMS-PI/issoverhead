@@ -3,6 +3,7 @@ import datetime as dt
 import smtplib
 from email.message import EmailMessage
 import os
+import ast
 
 MY_LATITUDE = float(os.environ.get("MY_LATITUDE"))
 MY_LONGITUDE = float(os.environ.get("MY_LONGITUDE"))
@@ -10,8 +11,9 @@ SENDER_EMAIL = os.environ.get("SENDER_EMAIL")
 SENDER_PASSWORD = os.environ.get("SENDER_PASSWORD")
 RECIPIENT_EMAIL = os.environ.get("RECIPIENT_EMAIL")
 SMTP_SERVER = os.environ.get("SMTP_SERVER")
+VERBOSE = ast.literal_eval(os.environ.get("VERBOSE"))
+DEBUG = ast.literal_eval(os.environ.get("DEBUG"))
 PORT = 587
-DEBUG = True
 
 
 def iss_position():
@@ -35,7 +37,8 @@ def is_night_time():
     }
     response = requests.get(url="https://api.sunrise-sunset.org/json", params=parameters)
     response.raise_for_status()
-    print(response.json())
+    if VERBOSE:
+        print(response.json())
     response_json = response.json()
     sunrise_str = response_json["results"]["sunrise"].split("T")[1].split(":")
     sunrise = dt.time(hour=int(sunrise_str[0]), minute=int(sunrise_str[1]))
@@ -64,17 +67,21 @@ def send_email():
 
 
 iss_pos = iss_position()
-print(iss_pos)
-print(abs(iss_pos[0] - MY_LATITUDE))
-print(abs(iss_pos[1] - MY_LONGITUDE))
+if VERBOSE:
+    print(iss_pos)
+    print(abs(iss_pos[0] - MY_LATITUDE))
+    print(abs(iss_pos[1] - MY_LONGITUDE))
 
 if (abs(iss_pos[0] - MY_LATITUDE) < 5 and abs(iss_pos[1] - MY_LONGITUDE) < 5) or DEBUG:
     if is_night_time() or DEBUG:
-        print(f"ISS is here. Go out! ({iss_pos[2]})")
+        if VERBOSE:
+            print(f"ISS is here. Go out! ({iss_pos[2]})")
         send_email()
     else:
-        print("It is daytime. Cannot see ISS.")
+        if VERBOSE:
+            print("It is daytime. Cannot see ISS.")
 else:
-    print(f"ISS is {abs(iss_pos[0] - MY_LATITUDE)} latitudes and "
-          f"{abs(iss_pos[1] - MY_LONGITUDE)} longitudes away\n"
-          f"({iss_pos[2]})")
+    if VERBOSE:
+        print(f"ISS is {abs(iss_pos[0] - MY_LATITUDE)} latitudes and "
+              f"{abs(iss_pos[1] - MY_LONGITUDE)} longitudes away\n"
+              f"({iss_pos[2]})")
